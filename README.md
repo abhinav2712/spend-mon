@@ -4,6 +4,8 @@ A conversational expense assistant built to prove one idea: **an agent's tools c
 
 Ask "how much did I spend on food in June?" and a Gemini-backed agent discovers remote tools over MCP, queries a SQLite database it has no direct access to, and streams the answer back token by token — with a chart rendered from the tool's structured output rather than from anything the model said.
 
+Demo video: https://drive.google.com/file/d/19T3jsrhsI_uzKnATpFmg-Z-uRzrLEcBY/view?usp=sharing
+
 ![SpendLite answering a question about June spending](docs/img/ui-chart.png)Everything above is one turn. The pill reading *Summarising by category* is a live `tool_call` event; the chart below it is drawn from the `tool_result` payload — real numbers straight out of SQLite — and only then does the prose stream in.
 
 ---
