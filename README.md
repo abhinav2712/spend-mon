@@ -145,6 +145,25 @@ This is also the pattern that generalizes: normalize the run into typed events, 
 
 The session **list** needed no new table: the SDK's own `agent_sessions` table already tracks ids and timestamps, and a title is just the first user message, extracted with `json_extract` (`spendlite_api/sessions.py`). Fewer tables, no write path to keep in sync, and it worked retroactively on sessions created before the web UI existed.
 
+#### Why sessions must move to Postgres in production
+
+This project has two SQLite databases, and only one of them is a problem at scale. Separating them matters.
+
+`expenses.db` is **read-only and baked into the image** at build time. Many readers, no writers, no volume, no coordination. SQLite is simply the right answer there, and would remain right at far larger sizes — it is the most widely deployed database in the world precisely for this shape of workload.
+
+`sessions.db` is **written on every turn**, and that changes everything:
+
+- **One instance, permanently.** SQLite has a single-writer model. Two API replicas pointed at the same file will corrupt it — so horizontal scaling is off the table, and so are rolling deploys, where the old and new containers briefly overlap.
+- **The disk has to survive.** History lives on a mounted volume. Any platform with an ephemeral filesystem — most serverless products and most free tiers — silently loses every conversation on restart.
+- **Writes serialize.** Concurrent users queue behind one another's turns. Invisible at demo scale; a real ceiling past a handful of people.
+- **No point-in-time recovery.** Backup means copying a file while nothing is writing to it.
+
+None of this matters for a laptop demo, which is what this is. All of it matters the moment there is more than one user or more than one instance — and it is the reason the deployment guidance says *exactly one replica, on a persistent volume*.
+
+The migration is smaller than it looks. The Agents SDK defines a `Session` protocol (`agents.memory.SessionABC`) with exactly four methods — `get_items`, `add_items`, `pop_item`, `clear_session` — so a Postgres-backed session is one class implementing those four, swapped in behind `open_session()` in `spendlite_api/sessions.py`. The SDK's other built-in, `OpenAIConversationsSession`, stores history on OpenAI's servers and is not an option here, since this project runs on Gemini.
+
+Two things travel with that change: the session-list query uses SQLite's `json_extract`, which becomes `->>` on Postgres, and the `SPENDLITE_SESSIONS_DB` file path becomes a connection URL. In exchange, the single-instance constraint disappears entirely.
+
 ### 5. SSE over WebSockets, and POST over `EventSource`
 
 The stream is one-directional, so SSE is sufficient and — unlike a WebSocket frame — inspectable with `curl`. The browser's native `EventSource` API only issues GET requests, which would force the user's message into a query string, so the frontend POSTs and parses the SSE frames by hand from a `ReadableStream` (`spendlite_web/src/lib/stream.ts`).
@@ -313,31 +332,18 @@ Grouped by the process each piece runs in.
 
 **Tools —** `spendlite_mcp`
 
-![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python&logoColor=white)
+![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python&logoColor=white)![Pydantic 2.13](https://img.shields.io/badge/Pydantic-2.13-E92063?style=flat&logo=pydantic&logoColor=white)![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat&logo=sqlite&logoColor=white)**Agent & API —** `spendlite_agent` · `spendlite_api`
 
-![Pydantic 2.13](https://img.shields.io/badge/Pydantic-2.13-E92063?style=flat&logo=pydantic&logoColor=white)![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat&logo=sqlite&logoColor=white)**Agent & API —** `spendlite_agent` · `spendlite_api`
+![OpenAI Agents SDK 0.18](https://img.shields.io/badge/Agents_SDK-0.18-412991?style=flat)![Gemini free tier](https://img.shields.io/badge/Gemini-free_tier-8E75B2?style=flat&logo=googlegemini&logoColor=white)![FastAPI 0.140](https://img.shields.io/badge/FastAPI-0.140-009688?style=flat&logo=fastapi&logoColor=white)![Server-Sent Events](https://img.shields.io/badge/transport-SSE-4C8DFF?style=flat)**Web —** `spendlite_web`
 
-![OpenAI Agents SDK 0.18](https://img.shields.io/badge/Agents_SDK-0.18-412991?style=flat)
+![React 19](https://img.shields.io/badge/React-19-20232A?style=flat&logo=react&logoColor=61DAFB)![TypeScript 6](https://img.shields.io/badge/TypeScript-6-3178C6?style=flat&logo=typescript&logoColor=white)![Vite 8](https://img.shields.io/badge/Vite-8-646CFF?style=flat&logo=vite&logoColor=white)![Tailwind 4](https://img.shields.io/badge/Tailwind-4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)![Recharts 3](https://img.shields.io/badge/Recharts-3-22B5BF?style=flat)**Deploy**
 
-![Gemini free tier](https://img.shields.io/badge/Gemini-free_tier-8E75B2?style=flat&logo=googlegemini&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker-compose-2496ED?style=flat&logo=docker&logoColor=white)
 
-![FastAPI 0.140](https://img.shields.io/badge/FastAPI-0.140-009688?style=flat&logo=fastapi&logoColor=white)
+## What I would do next
 
-![Server-Sent Events](https://img.shields.io/badge/transport-SSE-4C8DFF?style=flat)**Web —** `spendlite_web`
-
-![React 19](https://img.shields.io/badge/React-19-20232A?style=flat&logo=react&logoColor=61DAFB)
-
-![TypeScript 6](https://img.shields.io/badge/TypeScript-6-3178C6?style=flat&logo=typescript&logoColor=white)
-
-![Vite 8](https://img.shields.io/badge/Vite-8-646CFF?style=flat&logo=vite&logoColor=white)
-
-![Tailwind 4](https://img.shields.io/badge/Tailwind-4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
-
-![Recharts 3](https://img.shields.io/badge/Recharts-3-22B5BF?style=flat)**Deploy**
-
-![Docker Compose](https://img.shields.io/badge/Docker-compose-2496ED?style=flat&logo=docker&logoColor=white)## What I would do next
-
-- **Postgres instead of SQLite.** The SQL avoids SQLite-only functions (`substr` over `strftime`), so the queries port unchanged.
+- **Postgres for the session store.** The single-writer constraint is what pins this to one instance — see [Why sessions must move to Postgres in production](#why-sessions-must-move-to-postgres-in-production). `expenses.db` can stay SQLite indefinitely; it is read-only and baked into the image.
+- **If the expense data ever moves too,** the queries port with small mechanical changes rather than unchanged: `substr()` and the `GROUP BY` / `ORDER BY` aliases are portable, but `ROUND(SUM(x), 2)` has no `double precision` overload on Postgres, and every `?` placeholder becomes `%s`.
 - **Auth and multi-user sessions.** Session ids are currently unguessable but unauthenticated — fine for a laptop demo, not for a shared deployment.
 - **Retry the merged-tool-call failure** rather than surfacing it. The `error` event makes it visible; it could be made recoverable.
 - **Replay fixtures for the frontend.** Recorded event streams would let UI work continue without spending API quota.
