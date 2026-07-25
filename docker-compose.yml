@@ -1,0 +1,32 @@
+services:
+  spendlite-mcp:
+    build: ./spendlite_mcp
+    # No host port: the tool API only needs to be reachable inside the network.
+    # Uncomment to point MCP Inspector at it during the demo.
+    # ports: ["8010:8010"]
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - python -c "import socket; socket.create_connection(('127.0.0.1', 8010), 2).close()"
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  spendlite-api:
+    build:
+      context: .
+      dockerfile: spendlite_api/Dockerfile
+    ports: ["8000:8000"]
+    env_file: .env
+    environment:
+      SPENDLITE_MCP_URL: http://spendlite-mcp:8010/mcp
+      SPENDLITE_SESSIONS_DB: /data/sessions.db
+    volumes:
+      - spendlite-sessions:/data
+    depends_on:
+      spendlite-mcp:
+        condition: service_healthy
+
+volumes:
+  spendlite-sessions:

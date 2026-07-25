@@ -9,6 +9,9 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from openai.types.responses import ResponseTextDeltaEvent
 from pydantic import BaseModel
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+
 
 from spendlite_agent.core import build_agent, build_mcp_server
 from spendlite_api.events import (
@@ -27,6 +30,7 @@ from spendlite_api.sessions import (
     open_session,
 )
 
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 REDIRECT = (
     "I can only help with your recorded expenses. Try asking about spending "
     "in a particular month, category, or merchant."
@@ -128,3 +132,8 @@ async def send_message(session_id: str, body: MessageIn) -> StreamingResponse:
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+# Mount LAST so every /api route is matched first. Present only in the container
+# image, where the build copies the compiled SPA here; in dev, Vite serves it.
+if STATIC_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="web")
