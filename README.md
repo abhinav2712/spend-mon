@@ -379,7 +379,7 @@ The implementation plan was produced with Claude, using an interview format (`.a
 
 From there:
 
-- **The MCP server and the agent I wrote myself**, which is where the learning is concentrated — tool schemas, `ToolError` messages designed for a model to recover from, the Gemini wiring, the guardrail, session memory.
+- **The MCP server and the agent I implemented myself**, which is where the learning is concentrated — tool schemas, `ToolError` messages designed for a model to recover from, the Gemini wiring, the guardrail, session memory with **assisted AI** to get familair with patterns
 - **The web layer I handed to Claude** — the SSE translator, the React chat UI, and the styling — working from the event protocol I had already specified.
 
 The three entries under [Findings](#findings) came out of that collaboration: each was a real failure observed while running the thing, then reduced to a measurement before being fixed. Those measurements, and the decision of what to do about each, are mine.
