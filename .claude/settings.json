@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(sqlite3 sessions.db \"SELECT s.session_id, \\(SELECT json_extract\\(m.message_data,'\\\\$.content'\\) FROM agent_messages m WHERE m.session_id=s.session_id AND json_extract\\(m.message_data,'\\\\$.role'\\)='user' ORDER BY m.id LIMIT 1\\) FROM agent_sessions s ORDER BY s.updated_at DESC;\")",
-      "Bash(pkill -f \"uvicorn spendlite_api\")",
-      "Bash(pkill -f \"vite\")"
-    ]
-  }
-}

@@ -7,3 +7,10 @@ node_modules/
 dist/
 *.db-shm
 *.db-wal
+
+# agent tooling / local config
+.claude/
+
+# sqlite write-ahead log
+*.db-shm
+*.db-wal
