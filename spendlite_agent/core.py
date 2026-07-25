@@ -39,7 +39,10 @@ def build_agent(mcp_server: MCPServerStreamableHttp) -> Agent:
         name="SpendLiteAgent",
         instructions=INSTRUCTIONS_PATH.read_text(encoding="utf-8"),
         model=build_model(),
-        tools=[report_progress],
+        # report_progress is deliberately unwired: Gemini's OpenAI-compat layer merges
+        # the arguments of two tool calls emitted in the same turn, producing unparseable
+        # JSON. With one tool call per turn, 5/5 runs succeed instead of 3/4.
+        tools=[],
         mcp_servers=[mcp_server],
         input_guardrails=[expense_topic_guardrail],
     )
