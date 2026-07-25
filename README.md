@@ -332,12 +332,17 @@ Grouped by the process each piece runs in.
 
 **Tools —** `spendlite_mcp`
 
-![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python&logoColor=white)![Pydantic 2.13](https://img.shields.io/badge/Pydantic-2.13-E92063?style=flat&logo=pydantic&logoColor=white)![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat&logo=sqlite&logoColor=white)**Agent & API —** `spendlite_agent` · `spendlite_api`
+![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python&logoColor=white)![Pydantic 2.13](https://img.shields.io/badge/Pydantic-2.13-E92063?style=flat&logo=pydantic&logoColor=white)![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat&logo=sqlite&logoColor=white)
 
-![OpenAI Agents SDK 0.18](https://img.shields.io/badge/Agents_SDK-0.18-412991?style=flat)![Gemini free tier](https://img.shields.io/badge/Gemini-free_tier-8E75B2?style=flat&logo=googlegemini&logoColor=white)![FastAPI 0.140](https://img.shields.io/badge/FastAPI-0.140-009688?style=flat&logo=fastapi&logoColor=white)![Server-Sent Events](https://img.shields.io/badge/transport-SSE-4C8DFF?style=flat)**Web —** `spendlite_web`
+**Agent & API —** `spendlite_agent` · `spendlite_api`
 
-![React 19](https://img.shields.io/badge/React-19-20232A?style=flat&logo=react&logoColor=61DAFB)![TypeScript 6](https://img.shields.io/badge/TypeScript-6-3178C6?style=flat&logo=typescript&logoColor=white)![Vite 8](https://img.shields.io/badge/Vite-8-646CFF?style=flat&logo=vite&logoColor=white)![Tailwind 4](https://img.shields.io/badge/Tailwind-4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)![Recharts 3](https://img.shields.io/badge/Recharts-3-22B5BF?style=flat)**Deploy**
+![OpenAI Agents SDK 0.18](https://img.shields.io/badge/Agents_SDK-0.18-412991?style=flat)![Gemini free tier](https://img.shields.io/badge/Gemini-free_tier-8E75B2?style=flat&logo=googlegemini&logoColor=white)![FastAPI 0.140](https://img.shields.io/badge/FastAPI-0.140-009688?style=flat&logo=fastapi&logoColor=white)![Server-Sent Events](https://img.shields.io/badge/transport-SSE-4C8DFF?style=flat)
 
+**Web —** `spendlite_web`
+
+![React 19](https://img.shields.io/badge/React-19-20232A?style=flat&logo=react&logoColor=61DAFB)![TypeScript 6](https://img.shields.io/badge/TypeScript-6-3178C6?style=flat&logo=typescript&logoColor=white)![Vite 8](https://img.shields.io/badge/Vite-8-646CFF?style=flat&logo=vite&logoColor=white)![Tailwind 4](https://img.shields.io/badge/Tailwind-4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)![Recharts 3](https://img.shields.io/badge/Recharts-3-22B5BF?style=flat)
+
+**Deploy**
 ![Docker Compose](https://img.shields.io/badge/Docker-compose-2496ED?style=flat&logo=docker&logoColor=white)
 
 ## What I would do next
@@ -363,6 +368,8 @@ This is my first agent, so it seems worth being specific about where the knowled
 
 - **James Briggs — [Agents SDK from OpenAI | Full Tutorial](https://www.youtube.com/watch?v=35nxORG1mtg)** — the agent loop, `Agent` and `Runner`, function tools, guardrails, and conversational agents. Most of the agent-side vocabulary in this repo comes from here.
 - [**Model Context Protocol Explained in 20 Minutes**](https://www.youtube.com/watch?v=N3vHJcHBS-w) — a primer watched before the course, which is what made the process split in this project feel like the obvious design rather than an exotic one.
+- few articles: https://developers.openai.com/api/docs
+- Gemini for reasoning and learning basic concepts
 
 ### Where AI was used
 
