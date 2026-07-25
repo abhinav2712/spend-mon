@@ -16,11 +16,12 @@ from spendlite_agent.model import build_model
 GUARDRAIL_INSTRUCTIONS = (
     "Decide whether the user's message belongs in a conversation about their own recorded "
     "expenses. You see only the current message, not the conversation it came from.\n"
-    "On topic: amounts, categories, merchants, months, totals, budgets — and short follow-up "
-    "fragments such as 'and transport?', 'what about May?', or 'top three' that only make "
-    "sense as continuations of an expense question.\n"
-    "Off topic: investment or financial advice, politics, news, general knowledge, and other "
-    "unrelated subjects.\n"
+    "On topic: amounts, categories, merchants, months, totals and budgets; greetings and "
+    "openers such as 'hi', 'who are you', or 'what can you do'; and short follow-up "
+    "fragments such as 'and transport?' or 'what about May?' that only make sense as "
+    "continuations of an expense question.\n"
+    "Off topic: requests for investment or financial advice, politics, news, general "
+    "knowledge, and other unrelated subjects.\n"
     "If a message is ambiguous or very short, treat it as on topic."
 )
 
