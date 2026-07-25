@@ -95,7 +95,7 @@ Endpoint: `http://localhost:8010/mcp/`.
 
 ```bash
 npx @modelcontextprotocol/inspector
-# Transport: Streamable HTTP → URL: http://localhost:8010/mcp/
+# Transport: Streamable HTTP → URL: http://localhost:8010/mcp
 ```
 
 - [ ] Inspector connects and lists **all four tools** with correct input schemas

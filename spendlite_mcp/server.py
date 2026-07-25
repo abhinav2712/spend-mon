@@ -9,6 +9,7 @@ from schemas import MONTH_RE, CategorySummary, ExpenseRow, MonthInfo
 
 mcp = FastMCP("spendlite")
 
+## Annotated type for a month string in YYYY-MM format, with a description for the API docs.
 Month = Annotated[
     str, Field(description="Month to report on, in YYYY-MM form, e.g. 2026-06")
 ]
