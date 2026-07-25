@@ -23,7 +23,14 @@ function ChartTooltip({
   if (!active || !payload?.length) return null;
   const row = (payload[0] as { payload: CategoryRow }).payload;
   return (
-    <div className="glass rounded-xl px-3 py-2 text-xs">
+    <div
+      className="rounded-xl px-3 py-2 text-xs"
+      style={{
+        background: "#141c2b",
+        border: "1px solid var(--hairline)",
+        boxShadow: "0 12px 32px rgba(0,0,0,0.55)",
+      }}
+    >
       <p className="font-medium" style={{ color: "var(--ink)" }}>
         {titleCase(row.category)}
       </p>
@@ -64,9 +71,12 @@ export default function CategoryChart({ rows, month }: Props) {
             tickFormatter={titleCase}
           />
           <Tooltip
-            cursor={{ fill: "rgba(255,255,255,0.04)" }}
+            cursor={{ fill: "rgba(255,255,255,0.05)" }}
             content={<ChartTooltip />}
+            offset={16}
+            wrapperStyle={{ outline: "none", zIndex: 20 }}
           />
+
           <Bar
             dataKey="total_inr"
             radius={[0, 7, 7, 0]}

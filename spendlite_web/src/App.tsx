@@ -6,6 +6,7 @@ import { createSession, fetchHistory, listSessions } from "./lib/api";
 import { applyEvent, type ChatMessage } from "./lib/chat";
 import type { HistoryMessage, SessionSummary } from "./lib/events";
 import { streamChat } from "./lib/stream";
+import Header from "./components/Header";
 
 function toChatMessage(m: HistoryMessage): ChatMessage {
   return m.role === "user"
@@ -71,12 +72,7 @@ export default function App() {
         onNew={startNew}
       />
       <div className="relative z-10 flex min-w-0 flex-1 flex-col">
-        <header className="px-6 pt-6 pb-1">
-          <h1 className="text-base font-semibold tracking-tight">SpendLite</h1>
-          <p className="text-xs" style={{ color: "var(--ink-mute)" }}>
-            Your expenses, answered from your own records
-          </p>
-        </header>
+        <Header streaming={streaming} />
         <MessageList messages={messages} />
         <Composer disabled={streaming || !sessionId} onSend={send} />
       </div>
